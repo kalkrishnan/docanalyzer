@@ -1,12 +1,10 @@
 package com.kkrishnan.docanalyzer;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.regions.*;
 import software.amazon.awssdk.services.textract.*;
 import software.amazon.awssdk.services.textract.model.*;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 
@@ -53,7 +51,7 @@ public class AmazonTextractService {
         }
         return null;
     }
-    //@Cacheable(value = "textractCache",  key = "#jobId")
+
     public GetDocumentAnalysisResponse getDocumentAnalysisResults(String jobId, String nextToken){
         GetDocumentAnalysisRequest request = GetDocumentAnalysisRequest.builder()
                 .jobId(jobId)
