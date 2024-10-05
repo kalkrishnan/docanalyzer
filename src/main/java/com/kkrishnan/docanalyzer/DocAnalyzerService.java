@@ -20,7 +20,7 @@ public class DocAnalyzerService {
 
     @Cacheable(value = "textractCache",  key = "#jobId")
     public DocumentContent getAnalysisResults(String jobId){
-        List<String> extractedText = new ArrayList<>();
+        StringBuffer extractedText = new StringBuffer();
         String nextToken = null;
         List<Map<String, Object>> extractedTables = new ArrayList<>();
 
@@ -31,7 +31,8 @@ public class DocAnalyzerService {
 
             for (Block block : result.blocks()) {
                 if (block.blockType().equals(BlockType.LINE)) {
-                    extractedText.add(block.text());
+                    extractedText.append(block.text());
+                    extractedText.append(System.lineSeparator());
                 }
             }
             extractedTables.addAll(processTables(result.blocks()));
@@ -39,7 +40,7 @@ public class DocAnalyzerService {
             nextToken = result.nextToken();
         } while (nextToken != null);
 
-        return new DocumentContent(extractedText,extractedTables);
+        return new DocumentContent(extractedText.toString(),extractedTables);
     }
 
 

@@ -22,6 +22,9 @@ public class DocAnalyzerController {
     @Autowired
     private DocAnalyzerService docAnalyzerService;
 
+    @Autowired
+    private LLMService llmService;
+
     @PostMapping("/analyze")
     public ResponseEntity analyzeDocument(@RequestParam("file") MultipartFile file) {
             docRepositoryClient.uploadDocument(file);
@@ -39,7 +42,8 @@ public class DocAnalyzerController {
     public ResponseEntity<?> getAnalysisResults(@PathVariable String jobId) {
         try {
             DocumentContent result =docAnalyzerService.getAnalysisResults(jobId);
-            return ResponseEntity.ok(result);
+            String dates = llmService.extractDates(result.extractedText());
+            return ResponseEntity.ok(dates.substring(0, 500));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving analysis results: " + e.getMessage());
         }
