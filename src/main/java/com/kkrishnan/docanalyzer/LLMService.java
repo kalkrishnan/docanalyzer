@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 import com.kkrishnan.docanalyzer.models.ChatCompletionRequest;
 import com.kkrishnan.docanalyzer.models.ChatCompletionRequestMessage;
+import com.kkrishnan.docanalyzer.models.ChatCompletionResponse;
 import okhttp3.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,7 @@ public class LLMService {
         HashMap<String, String> messages = new HashMap<String, String>(){{
 
             put("system", "You are a helpful assistant that extracts important dates from text.");
-            put("user", "Extract all important dates from the following text, listing them in YYYY-MM-DD format if possible. If the exact date is not given, provide as much information as available. Text: " + text);
+            put("user", "Extract all important dates from the following text, listing them in YYYY-MM-DD format if possible. Return the result as a json with key value pairs where the key is the text associated with the date and the value is the date itself. Text: " + text);
 
         }};
 
@@ -51,8 +52,8 @@ public class LLMService {
             Response response = client.newCall(req).execute();
             if (response.isSuccessful()) {
                 String responseBody = response.body().string();
-                JsonObject responseJson = gson.fromJson(responseBody, JsonObject.class);
-                return responseJson.getAsJsonArray("data").get(0).getAsJsonObject().get("url").getAsString();
+                ChatCompletionResponse chatCompletionResponse = gson.fromJson(responseBody, ChatCompletionResponse.class);
+                return chatCompletionResponse.getChoices().getFirst().getMessage().getContent();
             } else {
                 System.out.println("OpenAI API request failed with response: " + response.body().string());
             }

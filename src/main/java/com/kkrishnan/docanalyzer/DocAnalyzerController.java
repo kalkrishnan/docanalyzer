@@ -43,7 +43,7 @@ public class DocAnalyzerController {
         try {
             DocumentContent result =docAnalyzerService.getAnalysisResults(jobId);
             String dates = llmService.extractDates(result.extractedText());
-            return ResponseEntity.ok(dates.substring(0, 500));
+            return ResponseEntity.ok(dates);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Error retrieving analysis results: " + e.getMessage());
         }
